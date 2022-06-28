@@ -5,17 +5,13 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mmensing <mmensing@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/06/24 15:07:08 by mmensing          #+#    #+#             */
-/*   Updated: 2022/06/25 17:27:21 by mmensing         ###   ########.fr       */
+/*   Created: 2022/06/26 15:30:17 by mmensing          #+#    #+#             */
+/*   Updated: 2022/06/27 22:07:17 by mmensing         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_PRINTF_H
 # define FT_PRINTF_H
-
-int ft_printf(const char *string, ...);
-char	*ft_strchr(const char *str, int c);
-void *ft_memmove(void *str_1, const void *str_2, size_t n);
 
 #include <string.h>
 #include <stddef.h>
@@ -25,4 +21,15 @@ void *ft_memmove(void *str_1, const void *str_2, size_t n);
 #include <stdarg.h>
 #include <sys/_types/_va_list.h>
 #include <unistd.h>
+
+int ft_printf(const char *string, ...);
+char	*ft_strchr(const char *str, int c);
+void *ft_memmove(void *str_1, const void *str_2, size_t n);
+
+char	*ft_strdup(char *src);
+size_t	ft_strlen(const char *str);
+char	*ft_itoa(int n);
+int	len_func(int n);
+
+
 #endif

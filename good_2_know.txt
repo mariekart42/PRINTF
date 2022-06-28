@@ -1,2 +1,5 @@
 -	If you pass integral value to 'va_arg' with conversion rank smaller than int (e.g. char, bool, or short), it will be converted to int
 	-> char c = va_arg(ap, INT);
+
+-	original function converts float to double
+	-> only advantage of float is that it only takes half the memory as double
