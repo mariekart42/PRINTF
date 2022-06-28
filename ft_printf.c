@@ -6,7 +6,7 @@
 /*   By: mmensing <mmensing@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/25 15:45:23 by mmensing          #+#    #+#             */
-/*   Updated: 2022/06/28 01:46:41 by mmensing         ###   ########.fr       */
+/*   Updated: 2022/06/28 18:08:12 by mmensing         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,13 @@
 // are we allowed to use macros??
 // %d and %i the fuggin same?
 
+// negative hex: 
+
+
 int c_type_func(char character);
 int s_type_func(char *string);
 int p_type_func(unsigned long long string);
-
-int      x_type_func(int long nbr, int count);
+int      x_X_type_func(unsigned int nbr, char letter);
 
 // print character %c
 int c_type_func(char character)
@@ -54,7 +56,7 @@ int p_type_func(unsigned long long string)
 	int count = 0;
 	
 	write(1, "0x", 2);
-	count += x_type_func(string, count);
+	count += x_X_type_func(string, 'x');
 	count +=2;
      return (count);
 	//return (2);
@@ -86,68 +88,47 @@ int      i_type_func(int nb)
 	return (2);
 }
 
-// prints lowercase hexadecimal %x
-int      x_type_func(int long nbr, int count)
+int len_func_hex(unsigned int nbr)
 {
-	static int kount;
+	int i;
 	
-	kount = count;  
-     // if(nbr < 0)
-     // {
-     //      nbr *= -1;
-     //      kount +=write (1, "-", 1);
-     // }
-     if (nbr >= 16)                         //16 cause F is 15
-     {
-          x_type_func (nbr / 16, kount);
-          x_type_func (nbr % 16, kount);
-     }
-     if (nbr < 16 && nbr > 9)
-     {
-          nbr = nbr + 39 + '0';//39 cause there are the lowercase letters -> ASCII
-          kount += write (1, &nbr , 1);
-     }
-     if (nbr < 16)
-     {
-          nbr = nbr + '0';
-          kount += write (1, &nbr, 1);
-     }
-	count = kount;
-	kount = 0;
-     return(count);
+	i = 0;
+	if (nbr == 0)
+		return(1);
+	if (nbr < 0)
+	{
+		nbr *= -1;
+	}
+	while(nbr > 0)
+	{
+		nbr /= 16;
+		i++;
+	}
+	return (i);
 }
 
-// prints uppercase hexadecimal %X
-int      X_type_func(int long nbr, int count)
+// prints lowercase AND uppercase hexadecimal %x & %X
+int      x_X_type_func(unsigned int nbr, char letter)
 {
-	static int kount;
-	
-	kount = count;  
-     // if(nbr < 0)
-     // {
-     //      nbr *= -1;
-     //      kount +=write (1, "-", 1);
-     // }
-     if (nbr >= 16)                         //16 cause F is 15
+	if (nbr >= 16)                         //16 cause F is 15
      {
-          x_type_func (nbr / 16, kount);
-          x_type_func (nbr % 16, kount);
+          x_X_type_func (nbr / 16, letter);
+          x_X_type_func (nbr % 16, letter);
      }
-     if (nbr < 16 && nbr > 9)
-     {
-          nbr = nbr + 7 + '0';//39 cause there are the lowercase letters -> ASCII
-          kount += write (1, &nbr , 1);
-     }
-     if (nbr < 16)
-     {
-          nbr = nbr + '0';
-          kount += write (1, &nbr, 1);
-     }
-	count = kount;
-	kount = 0;
-     return(count);
+	else 
+	{
+		if (nbr <= 9)
+			ft_putchar_fd(nbr + '0', 1);
+		else
+		{
+			if (letter == 'x')
+				ft_putchar_fd((nbr - 10 + 'a'), 1);
+			if (letter == 'X')
+				ft_putchar_fd((nbr - 10 + 'A'), 1);
+		}
+	}
+     return(len_func_hex(nbr));
 }
-
 
 // same as i_type_func i guess 
 int d_type_func(int decimal)
@@ -195,13 +176,13 @@ int percent_func(const char type_letter, va_list args)
 	if (type_letter == 'u')
 		return(u_type_func(va_arg(args, unsigned int)));
 	if (type_letter == 'x')
-		return(x_type_func(va_arg(args, int), 0));
+		return(x_X_type_func(va_arg(args, int), 'x'));
 	if (type_letter == 'X')
-		return(X_type_func(va_arg(args, int), 0));
+		return(x_X_type_func(va_arg(args, int), 'X'));
 	if (type_letter == '%')
 	{
 		write(1, "%%", 1);
-		return(2);
+		return(1);
 	}
 	return(0);
 }
@@ -212,9 +193,7 @@ int ft_printf(const char *string, ...)
 	int count = 0; // what in the end gets returned
 	
 	va_list args;
-	
 	va_start(args, string);
-	
 	while (string[i])
 	{
 		if (string[i] == '%')
@@ -239,13 +218,15 @@ int ft_printf(const char *string, ...)
 // 	int val = 0;
 // 	void *ptr;
 // 	void *tt;
-// 	val = printf("%p",(void *) -1);
+// 	val = printf("%x",123456);
+// 	printf("\nval_1: %d\n", val);
+// 	val = printf("%x",1);
 // 	printf("\nval_1: %d\n", val);
 // 	// val = printf("%p", tt);
 // 	// printf("\nval_1: %d\n", val);
 // 	val = 0;
 // 	printf("\n");
-// 	val = ft_printf("%p", (void *) -1);
+// 	val = ft_printf("%x", 123456);
 // 	printf("\nval_1: %d\n", val);
 // 	// val = ft_printf("%p", tt);
 // 	// printf("\nval_1: %d\n", val);

@@ -6,7 +6,7 @@
 /*   By: mmensing <mmensing@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/26 15:30:17 by mmensing          #+#    #+#             */
-/*   Updated: 2022/06/27 22:07:17 by mmensing         ###   ########.fr       */
+/*   Updated: 2022/06/28 16:57:14 by mmensing         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ void *ft_memmove(void *str_1, const void *str_2, size_t n);
 
 char	*ft_strdup(char *src);
 size_t	ft_strlen(const char *str);
+void	ft_putchar_fd(char c, int fd);
 char	*ft_itoa(int n);
 int	len_func(int n);
 

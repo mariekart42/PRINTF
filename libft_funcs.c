@@ -6,7 +6,7 @@
 /*   By: mmensing <mmensing@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/26 15:57:54 by mmensing          #+#    #+#             */
-/*   Updated: 2022/06/27 22:06:59 by mmensing         ###   ########.fr       */
+/*   Updated: 2022/06/28 16:57:04 by mmensing         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,4 +169,16 @@ size_t	ft_strlen(const char *str)
 	while (str[i] != '\0')
 		i++;
 	return (i);
+}
+
+
+/**
+ * @brief Outputs the character ’c’ to the given file descriptor
+ * 
+ * @param c character to output
+ * @param fd given file descriptor
+ */
+void	ft_putchar_fd(char c, int fd)
+{
+	write(fd, &c, 1);
 }
