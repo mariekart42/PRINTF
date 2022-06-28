@@ -6,7 +6,7 @@
 /*   By: mmensing <mmensing@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/25 15:45:23 by mmensing          #+#    #+#             */
-/*   Updated: 2022/06/28 18:08:12 by mmensing         ###   ########.fr       */
+/*   Updated: 2022/06/29 00:55:42 by mmensing         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,169 +23,48 @@
 // negative hex: 
 
 
-int c_type_func(char character);
-int s_type_func(char *string);
-int p_type_func(unsigned long long string);
-int      x_X_type_func(unsigned int nbr, char letter);
 
-// print character %c
-int c_type_func(char character)
-{
-	return (write(1, &character, 1));
-}
 
-// print string %s
-int s_type_func(char *string)
-{
-	int i;
+// int check_special_flags(char *flag)
+// {
 	
-	i = 0;
-	if (!string)
-		return (write(1, "(null)", 6));
-	while (string[i])
-	{
-		write(1, &string[i], 1);
-		i++;
-	}
-	return (i);
-}
+// 	return(1);
+// }
 
-// print void* into hex format %p
-int p_type_func(unsigned long long string)
+int percent_func(const char *type_letter, va_list args)
 {
-	int count = 0;
+	// int len;
+	// len = 0;
 	
-	write(1, "0x", 2);
-	count += x_X_type_func(string, 'x');
-	count +=2;
-     return (count);
-	//return (2);
-}
-
-// prints integer base 10 %i
-int      i_type_func(int nb)
-{
-     if (nb == -2147483648 )
-     {
-          write (1, "-2147483648", 11);
-          return (2);
-     }
-     if (nb < 0)
-     {
-          write (1, "-", 1);
-          nb *= -1;
-     }
-     if (nb > 9)
-     {
-          i_type_func (nb / 10);
-          i_type_func (nb % 10);
-     }
-     if (nb <= 9)
-     {
-          nb = nb + '0';
-          write (1, &nb, 1);
-     }
-	return (2);
-}
-
-int len_func_hex(unsigned int nbr)
-{
-	int i;
+	// int special_flag;
+	// special_flag = check_special_flags((char *)type_letter);
 	
-	i = 0;
-	if (nbr == 0)
-		return(1);
-	if (nbr < 0)
-	{
-		nbr *= -1;
-	}
-	while(nbr > 0)
-	{
-		nbr /= 16;
-		i++;
-	}
-	return (i);
-}
-
-// prints lowercase AND uppercase hexadecimal %x & %X
-int      x_X_type_func(unsigned int nbr, char letter)
-{
-	if (nbr >= 16)                         //16 cause F is 15
-     {
-          x_X_type_func (nbr / 16, letter);
-          x_X_type_func (nbr % 16, letter);
-     }
-	else 
-	{
-		if (nbr <= 9)
-			ft_putchar_fd(nbr + '0', 1);
-		else
-		{
-			if (letter == 'x')
-				ft_putchar_fd((nbr - 10 + 'a'), 1);
-			if (letter == 'X')
-				ft_putchar_fd((nbr - 10 + 'A'), 1);
-		}
-	}
-     return(len_func_hex(nbr));
-}
-
-// same as i_type_func i guess 
-int d_type_func(int decimal)
-{	
-	i_type_func(decimal);
-	return(2);
-}
-
-// prints unsigned integer base 10 %u
-int      u_type_func(unsigned int nb)
-{
-     if (nb < 0)
-     {
-          write (1, "-", 1);
-          nb *= -1;
-     }
-     if (nb > 9)
-     {
-          i_type_func (nb / 10);
-          i_type_func (nb % 10);
-     }
-     if (nb <= 9)
-     {
-          nb = nb + '0';
-          write (1, &nb, 1);
-     }
-	return (2);
-}
-
-int percent_func(const char type_letter, va_list args)
-{
-	int len;
-
-	len = 0;
-	if (type_letter == 'c')	
+	// if (special_flag == 1)
+	// 	type_letter++;
+	
+	if (*type_letter == 'c')	
 		return(c_type_func(va_arg(args, int)));
-	if (type_letter == 's')
+	if (*type_letter == 's')
 		return(s_type_func(va_arg(args, char*)));
-	if (type_letter == 'p')
+	if (*type_letter == 'p')
 		return(p_type_func(va_arg(args, unsigned long long)));
-	if (type_letter == 'd')
-		return(d_type_func(va_arg(args, int)));
-	if (type_letter == 'i')
-		return(i_type_func(va_arg(args, int)));
-	if (type_letter == 'u')
+	if (*type_letter == 'd' || *type_letter == 'i')
+		return(i_d_type_func(va_arg(args, int)));
+	if (*type_letter == 'u')
 		return(u_type_func(va_arg(args, unsigned int)));
-	if (type_letter == 'x')
+	if (*type_letter == 'x')
 		return(x_X_type_func(va_arg(args, int), 'x'));
-	if (type_letter == 'X')
+	if (*type_letter == 'X')
 		return(x_X_type_func(va_arg(args, int), 'X'));
-	if (type_letter == '%')
+	if (*type_letter == '%')
 	{
 		write(1, "%%", 1);
 		return(1);
 	}
 	return(0);
 }
+
+
 
 int ft_printf(const char *string, ...)
 {
@@ -198,11 +77,11 @@ int ft_printf(const char *string, ...)
 	{
 		if (string[i] == '%')
 		{
-			if ((ft_strchr("cspdiuxX", string[i + 1]) == NULL) && (string[i + 1] != '%')) // error
-			{
-				return (-1); // what to return??
-			}
-			count += percent_func(string[i + 1], args);
+			// if ((ft_strchr("cspdiuxX", string[i + 1]) == NULL) && (string[i + 1] != '%')) // error
+			// {
+			// 	i += check_special_flags(string[i+1], args);
+			// }
+			count += percent_func(string + 1 + i, args);
 			i++;
 		}
 		else
@@ -213,90 +92,24 @@ int ft_printf(const char *string, ...)
 	return (count);
 }
 
-// int main()
+// int main(void)
 // {
 // 	int val = 0;
-// 	void *ptr;
-// 	void *tt;
-// 	val = printf("%x",123456);
-// 	printf("\nval_1: %d\n", val);
-// 	val = printf("%x",1);
-// 	printf("\nval_1: %d\n", val);
-// 	// val = printf("%p", tt);
-// 	// printf("\nval_1: %d\n", val);
+	
+// 	val = printf("%+", 10);
+// 	printf("\nori_val_1: %d\n", val);
+	
+// 	val = printf("%+i",-10);
+// 	printf("\nori_val_2: %d\n", val);
+	
 // 	val = 0;
 // 	printf("\n");
-// 	val = ft_printf("%x", 123456);
-// 	printf("\nval_1: %d\n", val);
-// 	// val = ft_printf("%p", tt);
-// 	// printf("\nval_1: %d\n", val);
+	
+// 	val = ft_printf("%d", 10);
+// 	printf("\nmine_val_1: %d\n", val);
 
+// 	val = ft_printf("%d", -10);
+// 	printf("\nmine_val_2: %d\n", val);
 // }
 
-// int main()
-// {
-// 	ft_printf(" %c %c %c ", '2', '1', 0);
-// // 	char character = 'w';
-// 	int hex = 65535;
-// 	char *string = "bullshit";
-// 	int integer = 0123;
-// 	double double_int = 123456789;
-// 	double decimal = 420.20;
-// 	unsigned int zero_to_big = -2;
-    
-// 	// printf("\nTESTER-ORI\n--------\nchar: \t%c\n", character); 
-// 	// ft_printf("\nTESTER_MINE\n--------\nchar: \t%c\n", character); 
-//     //  //write(1, void_ptr_2, 10);   
-    
-// 	int val;
-// 	// val = printf("%c %c", '1', 9);
-// 	// printf("|");
-// 	// printf("\nval_1: %d\n", val);
-// 	// // val = printf(" %c", '0');
-// 	// // printf("\nval_2: %d\n", val);
-// 	// val= 0;
-// 	// printf("\n");
-// 	val = ft_printf("%c %c", '1', 9);
-// 	printf("|");
-// 	printf("\nval_2: %d\n", val);
-	
-// 	// val = ft_printf(" %c ", '0');
-	
-// 	//printf("\nval_1: %d\n", val);
-// 	printf("\n");
-	
-	
-	
-// 	//write(1, &void_ptr, 10);
-// 	// int val = 0;
-// 	// val = printf("(%d)\n", 2);
-// 	// printf("ori_val: %d\n", val);
-// 	// val = ft_printf("(%d)\n", 2);
-// 	// printf("mine_val: %d\n", val);
-// 	// ft_printf("hex: %x\n", hex);
-// 	// printf("ori: %i\n", zero_to_big);
-// 	// printf("ori: %d\n", zero_to_big);
-	
-// 	// ft_printf("mine: %d\n", zero_to_big);
-// 	// ft_printf("mine: %i\n", zero_to_big);
-	
-// 	// printf("ori_percent: %%\n");
-// 	// ft_printf("mine_percent: %%\n");
-	
-// 	// ft_printf("ori: %x\n", hex);
-// 	//ft_printf("\nTYPES\n-----\ninteger:  %i\nchar:\t  %c\nhex_low:  %x \nhex_up:\t  %X\nstring:\t  %s\ndecimal:  %d\n\n", integer, character, hex, hex, string, decimal);
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// + - for: d, i
